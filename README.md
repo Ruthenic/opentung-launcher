@@ -4,7 +4,7 @@ A GUI (and CLI, if you'd prefer) for launching [OpenTUNG](https://opentung.eccon
 - Autoupdating*
 - Game launching
 - GUI world selector
-- Game installation
+- Game installation  
 *Not actually automatic yet
 ## Screenshots
 TODO
