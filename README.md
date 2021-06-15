@@ -13,5 +13,4 @@ TODO
 ## What are the files?
 - `opentung` - the cli launcher. may not have The Newest Features™
 - `opentung-launcher.py` - the gui launcher. the component with the most development force.
-- `main.ui` - the QT Designer file. used for general UI design.
-- `main.spec` - a [PyInstaller](http://www.pyinstaller.org) spec file. used for packaging releases.  
+- `main.ui` - the QT Designer file. used for general UI design.  
