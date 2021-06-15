@@ -44,10 +44,20 @@ class Ui(QMainWindow):
         self.worldList = self.findChild(QtWidgets.QListWidget, "worldList")
         self.worldList.addItem("New")
         self.worldList.setCurrentItem(self.worldList.item(0))
+<<<<<<< Updated upstream
         try:
             self.worldList.addItems(os.listdir(basepath + pathsep + "OpenTUNG" + pathsep + "boards"))
         except:
             pass
+=======
+        self.worldList.addItems(os.listdir(basepath+"/OpenTUNG/boards"))
+        #Configure menubar
+        '''self.menubar = self.menuBar()
+        self.configMenu = self.menubar.addMenu('Config')
+        self.settingsAction = QAction('OpenTUNG Settings', self)
+        self.configMenu.addAction(self.settingsAction)
+        self.settingsAction.triggered.connect(self.tungConfig)'''
+>>>>>>> Stashed changes
         self.show() # Show the GUI
     def setStatus(self, message):
         self.statusBar.showMessage(message)
@@ -96,6 +106,7 @@ class Ui(QMainWindow):
             f.write(r.content)
         self.setStatus("Installed OpenTUNG!")
         os.chdir(olddir)
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = Ui()
