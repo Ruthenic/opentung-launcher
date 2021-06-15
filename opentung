@@ -1,0 +1,47 @@
+#!/usr/bin/python
+import requests,os,argparse,json,subprocess
+from bs4 import BeautifulSoup
+from sys import argv
+from pathlib import Path
+def getCommitHash(website):
+	return website.find("span").get_text()
+if os.name == 'nt':
+    os.environ["HOME"] = str(Path.home())
+basepath = os.environ["HOME"] + "/.opentung"
+site = requests.get("https://opentung.ecconia.com")
+site = BeautifulSoup(site.text, "lxml")
+currentcommit=getCommitHash(site)
+if not os.path.exists(os.environ["HOME"] + "/.opentung"):
+    os.makedirs(os.environ["HOME"] + "/.opentung")
+if not os.path.exists(basepath + "/launcher.txt"):
+    with open(basepath + "/launcher.txt", "w") as f:
+        f.write('{"commitHash":"currentcommit"}'.replace("currentcommit", currentcommit))
+os.chdir(basepath)
+config = json.load(open(basepath + "/launcher.txt"))
+if argv[1] == "help":
+    print("todo: help message")
+elif argv[1] == "install":
+    r = requests.get("https://opentung.ecconia.com/OpenTUNG.jar")
+    with open('OpenTUNG.jar', 'wb') as f:
+        f.write(r.content)
+elif argv[1] == "launch":
+    e=False
+    args = argv[1:][1:]
+    if len(args) > 0:
+        for arg in args:
+            if arg.startswith("--world"):
+                cmdline = "java -jar OpenTUNG.jar OpenTUNG/boards/" + arg.split("=")[1] + ".opentung"
+                e=True
+    if e == False:
+        cmdline = "java -jar OpenTUNG.jar"    
+    subprocess.run(cmdline, shell=True)
+elif argv[1] == "update":
+    if currentcommit == config["commitHash"]:
+        print("There is nothing to be done!")
+    else:
+        print("Version mismatch! Updating to " + currentcommit + "!")
+        r = requests.get("https://opentung.ecconia.com/OpenTUNG.jar")
+        with open('OpenTUNG.jar', 'wb') as f:
+            f.write(r.content)
+        config["commitHash"] = currentcommit
+json.dump(config, open(basepath + "/launcher.txt", "w"))
