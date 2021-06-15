@@ -1,4 +1,3 @@
-
 #!/usr/bin/python
 import requests,os,json,subprocess,sys
 from bs4 import BeautifulSoup
@@ -13,16 +12,19 @@ def getCommitHash(website):
 	return website.find("span").get_text()
 if os.name == 'nt':
     os.environ["HOME"] = str(Path.home())
-basepath = os.environ["HOME"] + "/.opentung"
+    pathsep = "\\"
+else:
+    pathsep = "/"
+basepath = os.environ["HOME"] + pathsep + ".opentung"
 site = requests.get("https://opentung.ecconia.com")
 site = BeautifulSoup(site.text, "lxml")
 currentcommit=getCommitHash(site)
-if not os.path.exists(os.environ["HOME"] + "/.opentung"):
-    os.makedirs(os.environ["HOME"] + "/.opentung")
-if not os.path.exists(basepath + "/launcher.txt"):
-    with open(basepath + "/launcher.txt", "w") as f:
+if not os.path.exists(basepath):
+    os.makedirs(basepath)
+if not os.path.exists(basepath + pathsep + "launcher.txt"):
+    with open(basepath + pathsep + "launcher.txt", "w") as f:
         f.write('{"commitHash":"currentcommit"}'.replace("currentcommit", currentcommit))
-config = json.load(open(basepath + "/launcher.txt"))
+config = json.load(open(basepath + pathsep + "launcher.txt"))
 
 
 class Ui(QMainWindow):
@@ -42,7 +44,10 @@ class Ui(QMainWindow):
         self.worldList = self.findChild(QtWidgets.QListWidget, "worldList")
         self.worldList.addItem("New")
         self.worldList.setCurrentItem(self.worldList.item(0))
-        self.worldList.addItems(os.listdir(basepath+"/OpenTUNG/boards"))
+        try:
+            self.worldList.addItems(os.listdir(basepath + pathsep + "OpenTUNG" + pathsep + "boards"))
+        except:
+            pass
         self.show() # Show the GUI
     def setStatus(self, message):
         self.statusBar.showMessage(message)
@@ -59,7 +64,7 @@ class Ui(QMainWindow):
             if world == "New":
                 cmdline = "java -jar OpenTUNG.jar"
             else:
-                cmdline = "java -jar OpenTUNG.jar " + basepath + "/OpenTUNG/boards/" + world
+                cmdline = "java -jar OpenTUNG.jar " + basepath + pathsep +  "OpenTUNG" + pathsep + "boards" + pathsep + world
         except:
             self.setStatus("WARN: Could not find selected world, defaulting to New!")
             cmdline = "java -jar OpenTUNG.jar"
